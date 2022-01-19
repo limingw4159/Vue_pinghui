@@ -8,8 +8,11 @@
           <p>尚品汇欢迎您！</p>
           <p>
             <span>请</span>
-            <a href="###">登录</a>
-            <a href="###" class="register">免费注册</a>
+            <!-- 声明式导航 -->
+            <router-link to="/login">login</router-link>
+            <router-link class="register" to="/home"
+              >free register
+            </router-link>
           </p>
         </div>
         <div class="typeList">
@@ -27,9 +30,15 @@
     <!--头部第二行 搜索区域-->
     <div class="bottom">
       <h1 class="logoArea">
-        <a class="logo" title="尚品汇" href="###" target="_blank">
+        <router-link
+          class="logo"
+          to="/home"
+          title="尚品汇"
+          href="###"
+          target="_blank"
+        >
           <img src="./images/logo.png" alt="" />
-        </a>
+        </router-link>
       </h1>
       <div class="searchArea">
         <form action="###" class="searchForm">
@@ -37,9 +46,15 @@
             type="text"
             id="autocomplete"
             class="input-error input-xxlarge"
+            v-model="keyword"
           />
-          <button class="sui-btn btn-xlarge btn-danger" type="button">
-            搜索
+          <!-- 编程式导航 -->
+          <button
+            class="sui-btn btn-xlarge btn-danger"
+            type="button"
+            @click="goSearch"
+          >
+            search
           </button>
         </form>
       </div>
@@ -48,7 +63,34 @@
 </template>
 
 <script>
-export default {};
+export default {
+  name: "",
+  data() {
+    return {
+      keyword: "",
+    };
+  },
+  methods: {
+    // 搜索按钮的毁掉函数:需要向search路由进行跳转
+    goSearch() {
+      //路由传递参数;
+      //第一种:字符串形式
+      //   this.$router.push(
+      //     "/search/" + this.keyword + "?k=" + this.keyword.toUpperCase()
+      //   );
+      //第二种:模版字符串
+      //   this.$router.push(
+      //     `/search/${this.keyword}?k=${this.keyword.toUpperCase()}`
+      //   );
+      //第三种:对象写法(常用),需要给路由起名字
+      this.$router.push({
+        name: "search",
+        params: { keyword: this.keyword },
+        query: { k: this.keyword.toUpperCase() },
+      });
+    },
+  },
+};
 </script>
 
 <style scoped lang="less">
