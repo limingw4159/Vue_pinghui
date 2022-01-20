@@ -87,14 +87,12 @@ export default new VueRouter({
     {
       path: "/login",
       component: Login,
-      meta: { show: true },
-      name: "login",
+      meta: { show: false },
     },
     {
       path: "/Register",
       component: Register,
       meta: { show: true },
-      name: "register",
     },
     //重定向,在项目跑起来的时候, 立马让他定位到首页
     {

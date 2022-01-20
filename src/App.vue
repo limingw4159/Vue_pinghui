@@ -22,7 +22,7 @@ export default {
     Footer,
   },
   mounted() {
-    //通知Vuex发请求,获取数据, 存储与仓库中,放在根组件里面不要放在NavCategory里面, 否则每切换一次页面就要重新发一次api
+    //通知Vuex发请求,获取数据, 存储与仓库中
     this.$store.dispatch("categoryList");
   },
 };
