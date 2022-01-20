@@ -10,7 +10,7 @@
             <span>请</span>
             <!-- 声明式导航 -->
             <router-link to="/login">login</router-link>
-            <router-link class="register" to="/home"
+            <router-link class="register" to="/register"
               >free register
             </router-link>
           </p>

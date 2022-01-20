@@ -3,58 +3,61 @@
   <div class="type-nav">
     <div class="container">
       <!--事件委托: 创建一个新的div wrap 住 自组件,使用事件委托把鼠标移出事件放在外部包裹的div上面 -->
-      <div @mouseleave="leaveIndex">
+      <div @mouseleave="leaveShow" @mouseenter="enterShow">
         <h2 class="all">全部商品分类</h2>
-        <!-- 三级联动 -->
-        <div class="sort">
-          <!-- 利用事件委派和编程式导航实现路由的跳转 -->
-          <div class="all-sort-list2" @click="goSearch">
-            <div
-              class="item"
-              v-for="(c1, index) in categoryList"
-              :key="c1.categoryId"
-              :class="{ cur: currentIndex == index }"
-            >
-              <h3 @mouseenter="changeIndex(index)">
-                <a
-                  :data-categoryName="c1.categoryName"
-                  :data-category1ID="c1.categoryId"
-                  >{{ c1.categoryName }}</a
-                >
-              </h3>
-              <!-- 二级,三级分类的地方 ,采用js来显示2,3级菜单栏-->
+        <!-- 过渡动画 -->
+        <transition name="sort">
+          <!-- 三级联动 -->
+          <div class="sort" v-show="show">
+            <!-- 利用事件委派和编程式导航实现路由的跳转 -->
+            <div class="all-sort-list2" @click="goSearch">
               <div
-                class="item-list clearfix"
-                :style="{ display: currentIndex == index ? 'block' : 'none' }"
+                class="item"
+                v-for="(c1, index) in categoryList"
+                :key="c1.categoryId"
+                :class="{ cur: currentIndex == index }"
               >
+                <h3 @mouseenter="changeIndex(index)">
+                  <a
+                    :data-categoryName="c1.categoryName"
+                    :data-category1ID="c1.categoryId"
+                    >{{ c1.categoryName }}</a
+                  >
+                </h3>
+                <!-- 二级,三级分类的地方 ,采用js来显示2,3级菜单栏-->
                 <div
-                  class="subitem"
-                  v-for="c2 in c1.categoryChild"
-                  :key="c2.categoryId"
+                  class="item-list clearfix"
+                  :style="{ display: currentIndex == index ? 'block' : 'none' }"
                 >
-                  <dl class="fore">
-                    <dt>
-                      <a
-                        :data-categoryName="c2.categoryName"
-                        :data-category2ID="c2.categoryId"
-                        >{{ c2.categoryName }}</a
-                      >
-                    </dt>
-                    <dd>
-                      <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                  <div
+                    class="subitem"
+                    v-for="c2 in c1.categoryChild"
+                    :key="c2.categoryId"
+                  >
+                    <dl class="fore">
+                      <dt>
                         <a
-                          :data-categoryName="c3.categoryName"
-                          :data-category3ID="c3.categoryId"
-                          >{{ c3.categoryName }}</a
+                          :data-categoryName="c2.categoryName"
+                          :data-category2ID="c2.categoryId"
+                          >{{ c2.categoryName }}</a
                         >
-                      </em>
-                    </dd>
-                  </dl>
+                      </dt>
+                      <dd>
+                        <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                          <a
+                            :data-categoryName="c3.categoryName"
+                            :data-category3ID="c3.categoryId"
+                            >{{ c3.categoryName }}</a
+                          >
+                        </em>
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </transition>
       </div>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -80,6 +83,7 @@ export default {
     return {
       //存储用户鼠标移上哪一个分类,设定初始值为-1
       currentIndex: -1,
+      show: true,
     };
   },
   methods: {
@@ -94,9 +98,13 @@ export default {
       //就是由于用户行为过快,导致浏览器反应不过来, 如果当前的回调函数中有一些大量业务, 有可能出现卡顿现象
       this.currentIndex = index;
     }, 50),
-    leaveIndex() {
-      //鼠标移出currentIndex, 变为-1
-      this.currentIndex = -1;
+    leaveShow() {
+      //给leave 也加一个判断做一个双保险, 鼠标移开并且不在’/home‘就隐藏
+      if (this.$route.path != "/home") {
+        //鼠标移出currentIndex, 变为-1
+        this.currentIndex = -1;
+        this.show = false;
+      }
     },
     goSearch(event) {
       //最好的解决方案是: 编程式导航+事件的委派
@@ -128,15 +136,21 @@ export default {
         //整理完参数
         location.query = query;
         console.log(location);
-        this.$router.push({ name: "Search", query: { keyword: this.keyword } });
+        this.$router.push(location);
       }
+    },
+    //当鼠标移入的时候让商品分类进行展示
+    enterShow() {
+      this.show = true;
     },
   },
 
   //组件挂载完毕: 可以像服务器发请求
   mounted() {
-    //通知Vuex发请求,获取数据, 存储与仓库中
-    this.$store.dispatch("categoryList");
+    //如果不是Home路由组件, 将typeNav进行隐藏
+    if (this.$route.path != "/home") {
+      this.show = false;
+    }
   },
   computed: {
     //导入mapState用来遍历组件
@@ -263,6 +277,17 @@ export default {
           background-color: skyblue;
         }
       }
+    }
+    //过度动画开始状态(进入)
+    .sort-enter {
+      height: 0px;
+    }
+    //过渡动画结束状态(进入)
+    .sort-enter-to {
+      height: 461培训;
+    }
+    .sort-enter-active {
+      transition: all 0.5s;
     }
   }
 }
