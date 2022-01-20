@@ -3,45 +3,61 @@
   <div class="type-nav">
     <div class="container">
       <!--事件委托: 创建一个新的div wrap 住 自组件,使用事件委托把鼠标移出事件放在外部包裹的div上面 -->
-      <div @mouseleave="leaveIndex">
+      <div @mouseleave="leaveShow" @mouseenter="enterShow">
         <h2 class="all">全部商品分类</h2>
-        <!-- 三级联动 -->
-        <div class="sort">
-          <div class="all-sort-list2">
-            <div
-              class="item"
-              v-for="(c1, index) in categoryList"
-              :key="c1.categoryId"
-              :class="{ cur: currentIndex == index }"
-            >
-              <h3 @mouseenter="changeIndex(index)">
-                <a href="">{{ c1.categoryName }}</a>
-              </h3>
-              <!-- 二级,三级分类的地方 ,采用js来显示2,3级菜单栏-->
+        <!-- 过渡动画 -->
+        <transition name="sort">
+          <!-- 三级联动 -->
+          <div class="sort" v-show="show">
+            <!-- 利用事件委派和编程式导航实现路由的跳转 -->
+            <div class="all-sort-list2" @click="goSearch">
               <div
-                class="item-list clearfix"
-                :style="{ display: currentIndex == index ? 'block' : 'none' }"
+                class="item"
+                v-for="(c1, index) in categoryList"
+                :key="c1.categoryId"
+                :class="{ cur: currentIndex == index }"
               >
+                <h3 @mouseenter="changeIndex(index)">
+                  <a
+                    :data-categoryName="c1.categoryName"
+                    :data-category1ID="c1.categoryId"
+                    >{{ c1.categoryName }}</a
+                  >
+                </h3>
+                <!-- 二级,三级分类的地方 ,采用js来显示2,3级菜单栏-->
                 <div
-                  class="subitem"
-                  v-for="c2 in c1.categoryChild"
-                  :key="c2.categoryId"
+                  class="item-list clearfix"
+                  :style="{ display: currentIndex == index ? 'block' : 'none' }"
                 >
-                  <dl class="fore">
-                    <dt>
-                      <a href="">{{ c2.categoryName }}</a>
-                    </dt>
-                    <dd>
-                      <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
-                        <a href="">{{ c3.categoryName }}</a>
-                      </em>
-                    </dd>
-                  </dl>
+                  <div
+                    class="subitem"
+                    v-for="c2 in c1.categoryChild"
+                    :key="c2.categoryId"
+                  >
+                    <dl class="fore">
+                      <dt>
+                        <a
+                          :data-categoryName="c2.categoryName"
+                          :data-category2ID="c2.categoryId"
+                          >{{ c2.categoryName }}</a
+                        >
+                      </dt>
+                      <dd>
+                        <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                          <a
+                            :data-categoryName="c3.categoryName"
+                            :data-category3ID="c3.categoryId"
+                            >{{ c3.categoryName }}</a
+                          >
+                        </em>
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </transition>
       </div>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -59,6 +75,7 @@
 
 <script>
 import { mapState } from "vuex";
+import _ from "lodash";
 export default {
   name: "NavCategory",
 
@@ -66,27 +83,74 @@ export default {
     return {
       //存储用户鼠标移上哪一个分类,设定初始值为-1
       currentIndex: -1,
+      show: true,
     };
   },
   methods: {
     //鼠标进入修改响应式数据currentIndex属性
-    changeIndex(index) {
+    //使用_引入lodash进行防截流
+    //throttle回调函数别用箭头函数, 可能出现上下文
+
+    changeIndex: _.throttle(function (index) {
       //index:鼠标移上某一个一级分类的元素的索引值
       //正常情况(用户慢慢操作): 鼠标进入,每一个一级分类h3, 都会出发鼠标进入事件
       //非正常情况(用户操作很快): 本身全部的一级分类都应该出发鼠标进入事件, 但是经过测试, 只有部分h3触发了
       //就是由于用户行为过快,导致浏览器反应不过来, 如果当前的回调函数中有一些大量业务, 有可能出现卡顿现象
-
       this.currentIndex = index;
+    }, 50),
+    leaveShow() {
+      //给leave 也加一个判断做一个双保险, 鼠标移开并且不在’/home‘就隐藏
+      if (this.$route.path != "/home") {
+        //鼠标移出currentIndex, 变为-1
+        this.currentIndex = -1;
+        this.show = false;
+      }
     },
-    leaveIndex() {
-      //鼠标移出currentIndex, 变为-1
-      this.currentIndex = -1;
+    goSearch(event) {
+      //最好的解决方案是: 编程式导航+事件的委派
+      //利用事件的委派能够解决一些问题
+      //1.事件委派是吧全部的子节点[h3,dt,dl,em]的事件委派给父亲酒店
+      //1. 点击的一定是a标签:才会进行路由跳转[怎么能确定点击的一定是a标签]
+      //2: 如何获取参数[1,2,3,级产品费勒的名字以及id]
+      //存在另外一个问题即使能确定点击a标签, 如何区分是一级, 二级,三级分类的标签
+      //第一个问题:把子节点当中a标签,, 我加上自定义属性data-categoryName, 其余的子节点是没有的
+      let element = event.target;
+      //获取到当前出发这个事件的节点[h3,a,dt,dl],需要带有data-categoryName这样节点[一定是a标签]
+      let { categoryname, category1id, category2id, category3id } =
+        element.dataset;
+      //如果标签身上拥有categoryname一定是a标签
+      if (categoryname) {
+        //整理路由跳转的参数
+        let location = { name: "search" };
+        let query = { categoryName: categoryname };
+        //一级分类, 二级分类, 三级分类的a标签
+        if (category1id) {
+          query.category1Id = category1id;
+        }
+        if (category2id) {
+          query.category2Id = category2id;
+        }
+        if (category3id) {
+          query.category3Id = category3id;
+        }
+        //整理完参数
+        location.query = query;
+        console.log(location);
+        this.$router.push(location);
+      }
+    },
+    //当鼠标移入的时候让商品分类进行展示
+    enterShow() {
+      this.show = true;
     },
   },
+
   //组件挂载完毕: 可以像服务器发请求
   mounted() {
-    //通知Vuex发请求,获取数据, 存储与仓库中
-    this.$store.dispatch("categoryList");
+    //如果不是Home路由组件, 将typeNav进行隐藏
+    if (this.$route.path != "/home") {
+      this.show = false;
+    }
   },
   computed: {
     //导入mapState用来遍历组件
@@ -213,6 +277,17 @@ export default {
           background-color: skyblue;
         }
       }
+    }
+    //过度动画开始状态(进入)
+    .sort-enter {
+      height: 0px;
+    }
+    //过渡动画结束状态(进入)
+    .sort-enter-to {
+      height: 461培训;
+    }
+    .sort-enter-active {
+      transition: all 0.5s;
     }
   }
 }
