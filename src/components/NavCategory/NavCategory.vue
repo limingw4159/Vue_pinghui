@@ -2,7 +2,47 @@
   <!-- 商品分类导航 -->
   <div class="type-nav">
     <div class="container">
-      <h2 class="all">全部商品分类</h2>
+      <!--事件委托: 创建一个新的div wrap 住 自组件,使用事件委托把鼠标移出事件放在外部包裹的div上面 -->
+      <div @mouseleave="leaveIndex">
+        <h2 class="all">全部商品分类</h2>
+        <!-- 三级联动 -->
+        <div class="sort">
+          <div class="all-sort-list2">
+            <div
+              class="item"
+              v-for="(c1, index) in categoryList"
+              :key="c1.categoryId"
+              :class="{ cur: currentIndex == index }"
+            >
+              <h3 @mouseenter="changeIndex(index)">
+                <a href="">{{ c1.categoryName }}</a>
+              </h3>
+              <!-- 二级,三级分类的地方 ,采用js来显示2,3级菜单栏-->
+              <div
+                class="item-list clearfix"
+                :style="{ display: currentIndex == index ? 'block' : 'none' }"
+              >
+                <div
+                  class="subitem"
+                  v-for="c2 in c1.categoryChild"
+                  :key="c2.categoryId"
+                >
+                  <dl class="fore">
+                    <dt>
+                      <a href="">{{ c2.categoryName }}</a>
+                    </dt>
+                    <dd>
+                      <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                        <a href="">{{ c3.categoryName }}</a>
+                      </em>
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <nav class="nav">
         <a href="###">服装城</a>
         <a href="###">美妆馆</a>
@@ -13,33 +53,6 @@
         <a href="###">有趣</a>
         <a href="###">秒杀</a>
       </nav>
-      <div class="sort">
-        <div class="all-sort-list2">
-          <div class="item" v-for="c1 in categoryList" :key="c1.categoryId">
-            <h3>
-              <a href="">{{ c1.categoryName }}</a>
-            </h3>
-            <div class="item-list clearfix">
-              <div
-                class="subitem"
-                v-for="c2 in c1.categoryChild"
-                :key="c2.categoryId"
-              >
-                <dl class="fore">
-                  <dt>
-                    <a href="">{{ c2.categoryName }}</a>
-                  </dt>
-                  <dd>
-                    <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
-                      <a href="">{{ c3.categoryName }}</a>
-                    </em>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -48,7 +61,29 @@
 import { mapState } from "vuex";
 export default {
   name: "NavCategory",
-  //组件挂载完毕: 可以想服务器发请求
+
+  data() {
+    return {
+      //存储用户鼠标移上哪一个分类,设定初始值为-1
+      currentIndex: -1,
+    };
+  },
+  methods: {
+    //鼠标进入修改响应式数据currentIndex属性
+    changeIndex(index) {
+      //index:鼠标移上某一个一级分类的元素的索引值
+      //正常情况(用户慢慢操作): 鼠标进入,每一个一级分类h3, 都会出发鼠标进入事件
+      //非正常情况(用户操作很快): 本身全部的一级分类都应该出发鼠标进入事件, 但是经过测试, 只有部分h3触发了
+      //就是由于用户行为过快,导致浏览器反应不过来, 如果当前的回调函数中有一些大量业务, 有可能出现卡顿现象
+
+      this.currentIndex = index;
+    },
+    leaveIndex() {
+      //鼠标移出currentIndex, 变为-1
+      this.currentIndex = -1;
+    },
+  },
+  //组件挂载完毕: 可以像服务器发请求
   mounted() {
     //通知Vuex发请求,获取数据, 存储与仓库中
     this.$store.dispatch("categoryList");
@@ -173,12 +208,9 @@ export default {
               }
             }
           }
-
-          &:hover {
-            .item-list {
-              display: block;
-            }
-          }
+        }
+        .cur {
+          background-color: skyblue;
         }
       }
     }
