@@ -87,7 +87,7 @@ export default new VueRouter({
     {
       path: "/login",
       component: Login,
-      meta: { show: false },
+      meta: { show: true },
       name: "login",
     },
     {
