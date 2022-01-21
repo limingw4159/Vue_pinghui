@@ -1,31 +1,18 @@
+/* eslint-disable no-unused-vars */
 <template>
   <!--楼层-->
   <div class="floor">
     <div class="py-container">
       <div class="title clearfix">
-        <h3 class="fl">家用电器</h3>
+        <h3 class="fl">{{ list.name }}</h3>
         <div class="fr">
           <ul class="nav-tabs clearfix">
-            <li class="active">
-              <a href="#tab1" data-toggle="tab">热门</a>
-            </li>
-            <li>
-              <a href="#tab2" data-toggle="tab">大家电</a>
-            </li>
-            <li>
-              <a href="#tab3" data-toggle="tab">生活电器</a>
-            </li>
-            <li>
-              <a href="#tab4" data-toggle="tab">厨房电器</a>
-            </li>
-            <li>
-              <a href="#tab5" data-toggle="tab">应季电器</a>
-            </li>
-            <li>
-              <a href="#tab6" data-toggle="tab">空气/净水</a>
-            </li>
-            <li>
-              <a href="#tab7" data-toggle="tab">高端电器</a>
+            <li
+              class="active"
+              v-for="(nav, index) in list.navList"
+              :key="index"
+            >
+              <a href="#tab1" data-toggle="tab">{{ nav.text }}</a>
             </li>
           </ul>
         </div>
@@ -35,49 +22,35 @@
           <div class="floor-1">
             <div class="blockgary">
               <ul class="jd-list">
-                <li>节能补贴</li>
-                <li>4K电视</li>
-                <li>空气净化器</li>
-                <li>IH电饭煲</li>
-                <li>滚筒洗衣机</li>
-                <li>电热水器</li>
+                <li v-for="(keyword, index) in list.keywords" :key="index">
+                  {{ keyword }}
+                </li>
               </ul>
-              <img src="./images/floor-1-1.png" />
+              <img :src="list.imgUrl" />
             </div>
             <div class="floorBanner">
-              <div class="swiper-container" id="floor1Swiper">
-                <div class="swiper-wrapper">
-                  <div class="swiper-slide">
-                    <img src="./images/floor-1-b01.png" />
-                  </div>
-                </div>
-                <!-- 如果需要分页器 -->
-                <div class="swiper-pagination"></div>
-
-                <!-- 如果需要导航按钮 -->
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-              </div>
+              <!-- 轮播图的地方 -->
+              <Carousel :list="list.carouselList" />
             </div>
             <div class="split">
               <span class="floor-x-line"></span>
               <div class="floor-conver-pit">
-                <img src="./images/floor-1-2.png" />
+                <img :src="list.recommendList[0]" />
               </div>
               <div class="floor-conver-pit">
-                <img src="./images/floor-1-3.png" />
+                <img :src="list.recommendList[1]" />
               </div>
             </div>
             <div class="split center">
-              <img src="./images/floor-1-4.png" />
+              <img :src="list.bigImg" />
             </div>
             <div class="split">
               <span class="floor-x-line"></span>
               <div class="floor-conver-pit">
-                <img src="./images/floor-1-5.png" />
+                <img :src="list.recommendList[2]" />
               </div>
               <div class="floor-conver-pit">
-                <img src="./images/floor-1-6.png" />
+                <img :src="list.recommendList[3]" />
               </div>
             </div>
           </div>
@@ -88,7 +61,60 @@
 </template>
 
 <script>
-export default {};
+export default {
+  name: "",
+  props: ["list"],
+  // mounted() {
+  // eslint-disable-next-line no-unused-vars
+  // var mySwiper = new Swiper(
+  //   //为什么Home组件的轮播图需要写在watch+$nextTick而这里可以直接写在mounted里面?
+  //   //因为此处的list是由父组件传来的, 并且父组件已经处理好了异步数据, 然后传递给子组件使用
+  //   this.$refs.cur,
+  //   {
+  //     loop: true,
+  //     //如果需要分页器
+  //     pagination: {
+  //       el: ".swiper-pagination",
+  //       clickable: true,
+  //     },
+  //     //如果需要前进后退按钮
+  //     navigation: {
+  //       nextEl: ".swiper-button-next",
+  //       prevEl: ".swiper-button-prev",
+  //     },
+  //   }
+  // );
+  // },
+  // watch: {
+  //   //立即监听, 不管你数据有没有变化,上来立即监听一次
+  //   //为什么watch监听不到list:因为这个数据从来没有发生变化(数据是父亲给的, 父亲给的时候就是一个对象, 对象里面该有的数据都是有的)
+
+  //   immediate: true,
+  //   list: {
+  //     handler() {
+  //       console.log("我在监听floor组件中的数据");
+  //       //只能监听到数据已经有了, 但是v-for动态渲染结构我们还是没有办法确定的, 因此还是要用nextTick
+  //       //为了共用轮播图的组件, 在这里使用watch+immediate:true来实现
+  //       this.$nextTick(() => {
+  //         // eslint-disable-next-line no-unused-vars
+  //         var mySwiper = new Swiper(this.$refs.cur, {
+  //           loop: true,
+  //           //如果需要分页器
+  //           pagination: {
+  //             el: ".swiper-pagination",
+  //             clickable: true,
+  //           },
+  //           //如果需要前进后退按钮
+  //           navigation: {
+  //             nextEl: ".swiper-button-next",
+  //             prevEl: ".swiper-button-prev",
+  //           },
+  //         });
+  //       });
+  //     },
+  //   },
+  // },
+};
 </script>
 
 <style scoped lang="less">

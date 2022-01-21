@@ -3,7 +3,7 @@ import Vue from "vue";
 
 import Vuex from "vuex";
 
-import { reqCategoryList, reqGetBannerList } from "@/api";
+import { reqCategoryList, reqGetBannerList, reqFloorList } from "@/api";
 //需要使用插件一次
 Vue.use(Vuex);
 
@@ -13,6 +13,8 @@ const state = {
   categoryList: [],
   //轮播图的数组
   bannerList: [],
+  //
+  floorList: [],
 };
 
 // //mutations: 修改state的唯一手段
@@ -22,6 +24,9 @@ const mutations = {
   },
   GETBANNERLIST(state, bannerList) {
     state.bannerList = bannerList;
+  },
+  GETFLOORLIST(state, floorList) {
+    state.floorList = floorList;
   },
 };
 
@@ -39,6 +44,13 @@ const actions = {
     let result = await reqGetBannerList();
     if (result.code === 200) {
       commit("GETBANNERLIST", result.data);
+    }
+  },
+  async getFloorList({ commit }) {
+    let result = await reqFloorList();
+    if (result.code == 200) {
+      //提交mutation
+      commit("GETFLOORLIST", result.data);
     }
   },
 };

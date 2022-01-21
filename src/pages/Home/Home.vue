@@ -6,8 +6,9 @@
     <Recommend></Recommend>
     <Rank />
     <Like />
-    <Floor />
-    <Floor />
+    <!-- //注意v-for之间的空格 -->
+    <!-- floor这个组件:自己在组件内部是没有发送请求的, 数据是父组件给的 -->
+    <Floor v-for="floor in floorList" :key="floor.id" :list="floor" />
     <Brand />
   </div>
 </template>
@@ -21,6 +22,7 @@ import Rank from "@/pages/Home/Rank/Rank.vue";
 import Like from "@/pages/Home/Like/Like.vue";
 import Floor from "@/pages/Home/Floor/Floor.vue";
 import Brand from "@/pages/Home/Brand/Brand.vue";
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -31,6 +33,15 @@ export default {
     Like,
     Floor,
     Brand,
+  },
+  mounted() {
+    //派发action,获取floor组件的数据
+    this.$store.dispatch("getFloorList");
+  },
+  computed: {
+    ...mapState({
+      floorList: (state) => state.home.floorList,
+    }),
   },
 };
 </script>

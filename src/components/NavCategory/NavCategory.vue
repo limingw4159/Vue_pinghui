@@ -99,10 +99,10 @@ export default {
       this.currentIndex = index;
     }, 50),
     leaveShow() {
+      //鼠标移出currentIndex, 变为-1
+      this.currentIndex = -1;
       //给leave 也加一个判断做一个双保险, 鼠标移开并且不在’/home‘就隐藏
       if (this.$route.path != "/home") {
-        //鼠标移出currentIndex, 变为-1
-        this.currentIndex = -1;
         this.show = false;
       }
     },
@@ -145,6 +145,7 @@ export default {
     //当鼠标移入的时候让商品分类进行展示
     enterShow() {
       this.show = true;
+      console.log(this.show);
     },
   },
 
@@ -287,7 +288,7 @@ export default {
     }
     //过渡动画结束状态(进入)
     .sort-enter-to {
-      height: 461培训;
+      height: 461px;
     }
     .sort-enter-active {
       transition: all 0.5s;

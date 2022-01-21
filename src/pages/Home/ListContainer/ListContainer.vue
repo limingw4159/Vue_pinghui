@@ -4,23 +4,7 @@
     <div class="sortList clearfix">
       <div class="center">
         <!--banner轮播-->
-        <div class="swiper-container" id="mySwiper">
-          <div class="swiper-wrapper">
-            <div
-              class="swiper-slide"
-              v-for="carousel in bannerList"
-              :key="carousel.id"
-            >
-              <img :src="carousel.imgUrl" />
-            </div>
-          </div>
-          <!-- 如果需要分页器 -->
-          <div class="swiper-pagination"></div>
-
-          <!-- 如果需要导航按钮 -->
-          <div class="swiper-button-prev"></div>
-          <div class="swiper-button-next"></div>
-        </div>
+        <Carousel :list="bannerList" />
       </div>
       <div class="right">
         <div class="news">
@@ -96,39 +80,75 @@
 </template>
 
 <script>
+import Carousel from "@/components/Carousel/Carousel.vue";
 import { mapState } from "vuex";
-import Swiper from "swiper";
 export default {
   name: "",
   mounted() {
-    //派发action:通过Vuex发起ajax请求,将数据存储在仓库当中
+    Carousel; //派发action:通过Vuex发起ajax请求,将数据存储在仓库当中
     this.$store.dispatch("getBannerList");
     //在new Swiper实例之前, 页面中结构必须得有. 现在new Swiper 实例放在mount 发现不行
     //为什么? 结构还不完整new Swiper于vuex之后创建实例,dispath当中设计到异步语句, 导致v-for遍历的时候结构还有完全因此不行
     //方案1:通过定时器解决
-    //方案2: 完美的解决方案, 通过watch属性
-    setTimeout(() => {
-      // eslint-disable-next-line no-unused-vars
-      var mySwiper = new Swiper(document.querySelector(".swiper-container"), {
-        loop: true,
-        //如果需要分页器
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
-        //如果需要前进后退按钮
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-      });
-    });
+    //方案2: 完美的解决方案, 通过watch属性+nexttick
+    // setTimeout(() => {
+    //   // eslint-disable-next-line no-unused-vars
+    //   var mySwiper = new Swiper(document.querySelector(".swiper-container"), {
+    //     loop: true,
+    //     //如果需要分页器
+    //     pagination: {
+    //       el: ".swiper-pagination",
+    //       clickable: true,
+    //     },
+    //     //如果需要前进后退按钮
+    //     navigation: {
+    //       nextEl: ".swiper-button-next",
+    //       prevEl: ".swiper-button-prev",
+    //     },
+    //   });
+    // });
   },
   computed: {
     ...mapState({
       bannerList: (state) => state.home.bannerList,
     }),
   },
+  //方案2: 完美的解决方案, 通过watch属性+nextTick:
+  //nextTick:在下次DOM更新 循环结束(dom v-for结束)之后, 执行延迟回调. 在修改数据之后立即使用这个方法,获取更新后的DOM
+  // watch: {
+  //   //监听bannerList属性的变化:因为这条数据发生过变化----有空数组变为数组里面有4个元素
+
+  //   bannerList: {
+  //     immediate: true,
+  //     //当前这个函数执行,只能保证bannerList数据已经有了, 但是你没办法保证v-for已经执行结束了
+  //     //v-for执行完毕,才有结构[你现在在watch当中没办法保证的]
+  //     // eslint-disable-next-line no-unused-vars
+  //     handler(newValue, oldValue) {
+  //       this.$nextTick(() => {
+  //         //当你执行这个回调的时候:保证服务器的数据回来了, v-for执行完毕了[轮播图的结构一定有了]
+  //         // eslint-disable-next-line no-unused-vars
+  //         var mySwiper = new Swiper(
+  //           //别直接用dom操作, 要换成ref
+  //           // document.querySelector(".swiper-container"),
+  //           this.$refs.mySwiper,
+  //           {
+  //             loop: true,
+  //             //如果需要分页器
+  //             pagination: {
+  //               el: ".swiper-pagination",
+  //               clickable: true,
+  //             },
+  //             //如果需要前进后退按钮
+  //             navigation: {
+  //               nextEl: ".swiper-button-next",
+  //               prevEl: ".swiper-button-prev",
+  //             },
+  //           }
+  //         );
+  //       });
+  //     },
+  //   },
+  // },
 };
 </script>
 
