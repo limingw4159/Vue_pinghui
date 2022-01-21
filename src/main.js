@@ -22,7 +22,7 @@ import "@/mock/mockServe";
 //在main 里面引入swiper样式
 
 // Import Swiper styles
-import "swiper/swiper-bundle.css";
+import "swiper/css/swiper.css";
 
 new Vue({
   render: (h) => h(App),

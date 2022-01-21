@@ -97,12 +97,32 @@
 
 <script>
 import { mapState } from "vuex";
-
+import Swiper from "swiper";
 export default {
   name: "",
   mounted() {
     //派发action:通过Vuex发起ajax请求,将数据存储在仓库当中
     this.$store.dispatch("getBannerList");
+    //在new Swiper实例之前, 页面中结构必须得有. 现在new Swiper 实例放在mount 发现不行
+    //为什么? 结构还不完整new Swiper于vuex之后创建实例,dispath当中设计到异步语句, 导致v-for遍历的时候结构还有完全因此不行
+    //方案1:通过定时器解决
+    //方案2: 完美的解决方案, 通过watch属性
+    setTimeout(() => {
+      // eslint-disable-next-line no-unused-vars
+      var mySwiper = new Swiper(document.querySelector(".swiper-container"), {
+        loop: true,
+        //如果需要分页器
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        //如果需要前进后退按钮
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      });
+    });
   },
   computed: {
     ...mapState({
