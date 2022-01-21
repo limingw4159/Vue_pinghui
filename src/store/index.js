@@ -1,6 +1,7 @@
 import Vue from "vue";
 
 import Vuex from "vuex";
+
 //引入其他的模块
 import home from "./home/home";
 import search from "./search/search";

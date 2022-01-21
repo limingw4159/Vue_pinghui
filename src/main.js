@@ -12,9 +12,17 @@ import store from "@/store";
 //Vue Component 是可以获取全局组件的方法, NavCategory 可以拿到组件的名字
 Vue.component(NavCategory.name, NavCategory);
 
-//测试
-import { reqCategoryList } from "@/api";
-reqCategoryList();
+//测试发送api
+// import { reqCategoryList } from "@/api";
+// reqCategoryList();
+
+//引入MockServer.js-----mock数据
+import "@/mock/mockServe";
+
+//在main 里面引入swiper样式
+
+// Import Swiper styles
+import "swiper/swiper-bundle.css";
 
 new Vue({
   render: (h) => h(App),
