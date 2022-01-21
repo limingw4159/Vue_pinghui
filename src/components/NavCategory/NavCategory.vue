@@ -133,10 +133,13 @@ export default {
         if (category3id) {
           query.category3Id = category3id;
         }
-        //整理完参数
-        location.query = query;
-        console.log(location);
-        this.$router.push(location);
+        //如果路由跳转的时候,带有params参数, 要一起传递过去
+        if (this.$route.params) {
+          location.params = this.$route.params;
+          //整理完参数
+          location.query = query;
+          this.$router.push(location);
+        }
       }
     },
     //当鼠标移入的时候让商品分类进行展示
