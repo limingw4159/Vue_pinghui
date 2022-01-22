@@ -19,10 +19,9 @@ export default {
   name: "Carousel",
   props: ["list"],
   watch: {
-    immediate: true,
     list: {
+      immediate: true,
       handler() {
-        console.log("我在监听floor组件中的数据");
         this.$nextTick(() => {
           // eslint-disable-next-line no-unused-vars
           var mySwiper = new Swiper(this.$refs.cur, {

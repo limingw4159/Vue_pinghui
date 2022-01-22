@@ -61,6 +61,7 @@
 </template>
 
 <script>
+// import Swiper from "swiper";
 export default {
   name: "",
   props: ["list"],
@@ -88,7 +89,6 @@ export default {
   // watch: {
   //   //立即监听, 不管你数据有没有变化,上来立即监听一次
   //   //为什么watch监听不到list:因为这个数据从来没有发生变化(数据是父亲给的, 父亲给的时候就是一个对象, 对象里面该有的数据都是有的)
-
   //   immediate: true,
   //   list: {
   //     handler() {

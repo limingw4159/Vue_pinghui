@@ -145,7 +145,6 @@ export default {
     //当鼠标移入的时候让商品分类进行展示
     enterShow() {
       this.show = true;
-      console.log(this.show);
     },
   },
 

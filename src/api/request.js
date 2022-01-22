@@ -7,8 +7,6 @@ import nProgress from "nprogress";
 //start:进度条开始 done:进度条结束
 import "nprogress/nprogress.css";
 
-console.log(nProgress);
-
 //1. 利用axios 对象的方法create, 去创建一个axios 实例
 //2. request就是axios, 只不过稍微配置一下
 const requests = axios.create({

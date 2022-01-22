@@ -80,12 +80,11 @@
 </template>
 
 <script>
-import Carousel from "@/components/Carousel/Carousel.vue";
 import { mapState } from "vuex";
 export default {
   name: "",
   mounted() {
-    Carousel; //派发action:通过Vuex发起ajax请求,将数据存储在仓库当中
+    //派发action:通过Vuex发起ajax请求,将数据存储在仓库当中
     this.$store.dispatch("getBannerList");
     //在new Swiper实例之前, 页面中结构必须得有. 现在new Swiper 实例放在mount 发现不行
     //为什么? 结构还不完整new Swiper于vuex之后创建实例,dispath当中设计到异步语句, 导致v-for遍历的时候结构还有完全因此不行
