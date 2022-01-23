@@ -32,4 +32,8 @@ new Vue({
   router,
   //注册仓库:组件实例的身上会多一个属性$store属性
   store,
+  //配置全局总线$bus
+  beforeCreate() {
+    Vue.prototype.$bus = this;
+  },
 }).$mount("#app");
