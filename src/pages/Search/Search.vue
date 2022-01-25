@@ -21,34 +21,43 @@
               {{ searchParams.keyword }}
               <i @click="removeKeyword">x</i>
             </li>
+            <!-- 品牌的面包屑 -->
+            <li class="with-x" v-if="searchParams.trademark">
+              {{ searchParams.trademark.split(":")[1] }}
+              <i @click="removeTradeMark">x</i>
+            </li>
+            <!-- 属性的面包屑 -->
+            <li
+              class="with-x"
+              v-for="(attrValue, index) in searchParams.props"
+              :key="index"
+            >
+              {{ attrValue.split(":")[1] }}
+              <i @click="removeAttr(index)">x</i>
+            </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector @trademarkInfo="trademarkInfo" @attrInfo="attrInfo" />
 
         <!--details-->
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <!-- 类名是否有active取决于是否有searchParams的order是否包含1,如果包含1 就为1且不等于后面的-1.返回就为true -->
+                <li :class="{ active: isOne }">
+                  <a
+                    >综合
+                    <span><i class="fas fa-arrow-up" v-show="isOne"></i></span
+                  ></a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{ active: isTwo }">
+                  <a
+                    >价格
+                    <span><i class="fas fa-arrow-up" v-show="isTwo"></i></span
+                  ></a>
                 </li>
               </ul>
             </div>
@@ -148,7 +157,8 @@ export default {
         category3Id: "",
         categoryName: "",
         keyword: "",
-        order: "",
+        //排序初始值,应该是综合并且降序
+        order: "1:desc",
         pageNo: 1,
         pageSize: 3,
         props: [],
@@ -187,6 +197,14 @@ export default {
   // 用mapgetters来拿到处理后的数据
   computed: {
     ...mapGetters(["goodsList"]),
+    isOne() {
+      console.log(1);
+      return this.searchParams.order.indexOf("1") != -1;
+    },
+    isTwo() {
+      console.log(2);
+      return this.searchParams.order.indexOf("2") != -1;
+    },
   },
   methods: {
     //想服务器发请求获取search模块数据(根据参数不同返回不同的数据进行展示),可以多次发送请求
@@ -222,6 +240,39 @@ export default {
       if (this.$route.query) {
         this.$router.push({ name: "search", query: this.$route.query });
       }
+    },
+    //删除品牌的信息
+    removeTradeMark() {
+      this.searchParams.trademark = undefined;
+      //再次发请求
+      this.getData();
+    },
+    //定义总事件回调,子组件触发,这个函数需要传参, 所以就要在@click事件传参数,并且由于是个回调函数, 所以子组件emit 的时候进行传参数, 而父组件就负责他传给子组件
+    trademarkInfo(trademark) {
+      //1. 整理品牌字段的参数:“ID:品牌名称”
+      console.log("我是父组件", trademark);
+      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`;
+      //再次发请求获取search模块列表数据进行展示
+      this.getData();
+    },
+    //收集平台属性地方回调函数(自定义事件)
+    attrInfo(attr, attrValue) {
+      //["属性ID:属性值:属性名"]
+      let props = `${attr.attrId}:${attrValue}:${attr.attrName}`;
+      //数组去重, 如果有重复的就不添加
+      if (this.searchParams.props.indexOf(props) == -1) {
+        this.searchParams.props.push(props);
+      }
+      //再次发请求
+      this.getData();
+      console.log(props);
+    },
+    //removeAttr删除售卖的属性
+    removeAttr(index) {
+      //再次整理参数
+      this.searchParams.props.splice(index, 1);
+      //再次发请求
+      this.getData();
     },
   },
   //数据监听:监听组件实例身上的属性的属性值变化

@@ -14,6 +14,21 @@ Vue.component(NavCategory.name, NavCategory);
 import Carousel from "@/components/Carousel/Carousel";
 Vue.component(Carousel.name, Carousel);
 
+/* import the fontawesome core */
+import { library } from "@fortawesome/fontawesome-svg-core";
+
+/* import specific icons */
+import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
+
+/* import font awesome icon component */
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+
+/* add icons to the library */
+library.add(faUserSecret);
+
+/* add font awesome icon component */
+Vue.component("font-awesome-icon", FontAwesomeIcon);
+
 //测试发送api
 // import { reqCategoryList } from "@/api";
 // reqCategoryList();

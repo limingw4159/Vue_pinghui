@@ -3,8 +3,13 @@
     <div class="type-wrap logo">
       <div class="fl key brand">品牌</div>
       <div class="value logos">
+        <!-- 品牌的地方,给他加一个事件用于点击处理 -->
         <ul class="logo-list">
-          <li v-for="trademark in trademarkList" :key="trademark.tmId">
+          <li
+            v-for="trademark in trademarkList"
+            :key="trademark.tmId"
+            @click="tradeMarkHandler(trademark)"
+          >
             {{ trademark.tmName }}
           </li>
         </ul>
@@ -14,11 +19,18 @@
         <a href="javascript:void(0);">更多</a>
       </div>
     </div>
+    <!-- 平台售卖属性的地方 -->
     <div class="type-wrap" v-for="attr in attrsList" :key="attr.attrId">
+      <!-- 品台售卖属性:比如说颜色 -->
       <div class="fl key">{{ attr.attrName }}</div>
       <div class="fl value">
         <ul class="type-list">
-          <li v-for="(attrValue, index) in attr.attrValueList" :key="index">
+          <!-- 平台相应售卖的属性的属性值:粉色蓝色,黑色 -->
+          <li
+            v-for="(attrValue, index) in attr.attrValueList"
+            :key="index"
+            @click="attrInfo(attr, attrValue)"
+          >
             <a>{{ attrValue }}</a>
           </li>
         </ul>
@@ -34,6 +46,21 @@ export default {
   name: "SearchSelector",
   computed: {
     ...mapGetters(["trademarkList", "attrsList"]),
+  },
+  methods: {
+    //品牌的点击事件处理
+    tradeMarkHandler(trademark) {
+      //点击了品牌(苹果),还是需要整理参数, 想服务器发请求获取相应的数据进行展示
+      //是父组件发请求?还是子组件发请求?
+      //父组件中的searchParams参数是传给服务器参数, 子组件把你点击的品牌信息,需要给父组件传递过去
+      //子给父传参数, 用自定义事件
+      // console.log(trademark.tmId);
+      this.$emit("trademarkInfo", trademark);
+    },
+    //平台售卖属性值的点击事件
+    attrInfo(attr, attrValue) {
+      this.$emit("attrInfo", attr, attrValue);
+    },
   },
 };
 </script>
