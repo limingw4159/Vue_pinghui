@@ -50,13 +50,29 @@
                 <li :class="{ active: isOne }">
                   <a
                     >综合
-                    <span><i class="fas fa-arrow-up" v-show="isOne"></i></span
+                    <span
+                      ><i
+                        class="fas"
+                        :class="{
+                          'fa-arrow-up': isAsc,
+                          'fa-arrow-down': isDesc,
+                        }"
+                        v-show="isOne"
+                      ></i> </span
                   ></a>
                 </li>
                 <li :class="{ active: isTwo }">
                   <a
                     >价格
-                    <span><i class="fas fa-arrow-up" v-show="isTwo"></i></span
+                    <span
+                      ><i
+                        class="fas"
+                        v-show="isTwo"
+                        :class="{
+                          'fa-arrow-up': isAsc,
+                          'fa-arrow-down': isDesc,
+                        }"
+                      ></i></span
                   ></a>
                 </li>
               </ul>
@@ -198,12 +214,16 @@ export default {
   computed: {
     ...mapGetters(["goodsList"]),
     isOne() {
-      console.log(1);
       return this.searchParams.order.indexOf("1") != -1;
     },
     isTwo() {
-      console.log(2);
       return this.searchParams.order.indexOf("2") != -1;
+    },
+    isAsc() {
+      return this.searchParams.order.indexOf("asc") != -1;
+    },
+    isDesc() {
+      return this.searchParams.order.indexOf("desc") != -1;
     },
   },
   methods: {
