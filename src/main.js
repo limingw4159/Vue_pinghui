@@ -23,6 +23,8 @@ import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 /* import font awesome icon component */
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
+import Pagination from "@/components/Pagination/Pagination";
+Vue.component(Pagination.name, Pagination);
 /* add icons to the library */
 library.add(faUserSecret);
 

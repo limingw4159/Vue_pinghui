@@ -47,32 +47,24 @@
             <div class="navbar-inner filter">
               <ul class="sui-nav">
                 <!-- 类名是否有active取决于是否有searchParams的order是否包含1,如果包含1 就为1且不等于后面的-1.返回就为true -->
-                <li :class="{ active: isOne }">
+                <li :class="{ active: isOne }" @click="changeOrder('1')">
                   <a
                     >综合
-                    <span
-                      ><i
-                        class="fas"
-                        :class="{
-                          'fa-arrow-up': isAsc,
-                          'fa-arrow-down': isDesc,
-                        }"
-                        v-show="isOne"
-                      ></i> </span
+                    <span v-show="isOne && isDesc"
+                      ><i class="fas fa-arrow-down"></i
+                    ></span>
+                    <span v-show="isOne && isAsc"
+                      ><i class="fas fa-arrow-up"></i></span
                   ></a>
                 </li>
-                <li :class="{ active: isTwo }">
+                <li :class="{ active: isTwo }" @click="changeOrder('2')">
                   <a
                     >价格
-                    <span
-                      ><i
-                        class="fas"
-                        v-show="isTwo"
-                        :class="{
-                          'fa-arrow-up': isAsc,
-                          'fa-arrow-down': isDesc,
-                        }"
-                      ></i></span
+                    <span v-show="isTwo && isDesc"
+                      ><i class="fas fa-arrow-down"></i
+                    ></span>
+                    <span v-show="isTwo && isAsc"
+                      ><i class="fas fa-arrow-up"></i></span
                   ></a>
                 </li>
               </ul>
@@ -120,35 +112,14 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <!-- 分页器 -->
+          <Pagination
+            :pageNo="searchParams.pageNo"
+            :pageSize="searchParams.pageSize"
+            :total="total"
+            continues="5"
+            @getPageNo="getPageNo"
+          />
         </div>
       </div>
     </div>
@@ -158,7 +129,7 @@
 <script>
 // import { mapState } from "vuex";
 import SearchSelector from "./SearchSelector/SearchSelector";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "Search",
   components: {
@@ -225,6 +196,10 @@ export default {
     isDesc() {
       return this.searchParams.order.indexOf("desc") != -1;
     },
+    //获取search模块一共展示多少数据
+    ...mapState({
+      total: (state) => state.search.searchList.total,
+    }),
   },
   methods: {
     //想服务器发请求获取search模块数据(根据参数不同返回不同的数据进行展示),可以多次发送请求
@@ -293,6 +268,33 @@ export default {
       this.searchParams.props.splice(index, 1);
       //再次发请求
       this.getData();
+    },
+    //排序的操作
+    changeOrder(flag) {
+      //flag用来标记点击的是综合还是价格,综合(1), 价格(2)[用户点击的事件传递进来的]
+      // let originOrder = this.searchParams.order;
+      let newOrder = "";
+      //这里获取到的是最开始的状态
+      let originFlag = this.searchParams.order.split(":")[0];
+      let originSort = this.searchParams.order.split(":")[1];
+      console.log(originFlag, originSort, flag);
+
+      if (flag == originFlag) {
+        newOrder = `${originFlag}:${originSort == "desc" ? "asc" : "desc"}`;
+        console.log(newOrder);
+      } else {
+        //点击的是价格
+        newOrder = `${flag}:${"desc"}`;
+        console.log(newOrder);
+      }
+      //将心的order 赋予searchParams,并且再次发请求
+      this.searchParams.order = newOrder;
+
+      this.getData();
+      console.log(this.searchParams.order);
+    },
+    getPageNo(pageNo) {
+      console.log(pageNo);
     },
   },
   //数据监听:监听组件实例身上的属性的属性值变化
