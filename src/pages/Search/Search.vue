@@ -76,9 +76,10 @@
               <li class="yui3-u-1-5" v-for="good in goodsList" :key="good.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank"
+                    <!-- 在路由跳转的时候切记别忘记带id(params)参数 -->
+                    <router-link :to="`/detail/${good.id}`"
                       ><img :src="good.defaultImg"
-                    /></a>
+                    /></router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -294,7 +295,10 @@ export default {
       console.log(this.searchParams.order);
     },
     getPageNo(pageNo) {
-      console.log(pageNo);
+      //整理带给服务器的参数
+      this.searchParams.pageNo = pageNo;
+      //再次发请求
+      this.getData();
     },
   },
   //数据监听:监听组件实例身上的属性的属性值变化

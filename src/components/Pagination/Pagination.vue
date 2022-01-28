@@ -8,23 +8,27 @@
     <button
       v-if="startNumAndEndNum.start > 1"
       @click="$emit('getPageNo', pageNo - 1)"
+      :class="{ active: pageNo == 1 }"
     >
       1
     </button>
     <button v-if="startNumAndEndNum.start > 2">...</button>
     <!-- 中间部分v-for遍历 -->
+    <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
     <button
-      v-for="(page, index) in startNumAndEndNum.end"
+      v-for="(page, index) in startNumAndEndNum.newEnd"
       :key="index"
       v-if="page >= startNumAndEndNum.start"
-      @click="$emit('getPageNo', pageNo)"
+      @click="$emit('getPageNo', page)"
+      :class="{ active: pageNo == page }"
     >
       {{ page }}
     </button>
-    <button v-if="startNumAndEndNum.end < totalPage - 1">...</button>
+    <button v-if="startNumAndEndNum.newEnd < totalPage - 1">...</button>
     <button
-      v-if="startNumAndEndNum.end < totalPage"
+      v-if="startNumAndEndNum.newEnd < totalPage"
       @click="$emit('getPageNo', pageNo)"
+      :class="{ active: pageNo == totalPage }"
     >
       {{ totalPage }}
     </button>
@@ -36,7 +40,6 @@
     </button>
 
     <button style="margin-left: 30px">共{{ total }}条</button>
-    <h1>{{ startNumAndEndNum }}---{{ pageNo }}</h1>
   </div>
 </template>
 
@@ -58,6 +61,7 @@ export default {
       const { continues, pageNo, totalPage } = this;
       let start = 0;
       let end = 0;
+
       //连续页码数字5[就是至少五页],如果出现不正常的现象[就是不够5页]
       if (continues > totalPage) {
         start = 1;
@@ -78,8 +82,8 @@ export default {
           start = totalPage - continues + 1;
         }
       }
-      console.log(start, end);
-      return { start, end };
+      let newEnd = parseInt(end);
+      return { start, newEnd };
     },
   },
 };
@@ -117,5 +121,8 @@ export default {
       color: #fff;
     }
   }
+}
+.active {
+  background: skyblue;
 }
 </style>
