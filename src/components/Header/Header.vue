@@ -6,13 +6,19 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+          <!-- 没有用户名,未登陆 -->
+          <p v-if="!userName">
             <span>请</span>
             <!-- 声明式导航 -->
             <router-link to="/login">login</router-link>
             <router-link class="register" to="/register"
               >free register
             </router-link>
+          </p>
+          <!-- 登陆了 -->
+          <p v-else>
+            <a>{{ userName }}</a>
+            <a class="register">退出登陆</a>
           </p>
         </div>
         <div class="typeList">
@@ -69,6 +75,12 @@ export default {
     return {
       keyword: "",
     };
+  },
+  computed: {
+    //用户名信息
+    userName() {
+      return this.$store.state.user.userInfo.name;
+    },
   },
   methods: {
     // 搜索按钮的毁掉函数:需要向search路由进行跳转
