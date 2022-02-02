@@ -45,7 +45,10 @@ import "swiper/css/swiper.css";
 
 //统一引入API
 import * as API from "@/api";
-
+import { MessageBox } from "element-ui";
+//element ui 注册组件可以挂在原型上,需要先引入
+Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$alert = MessageBox.alert;
 new Vue({
   render: (h) => h(App),
   //注册路由, 由于KV一致,省略V

@@ -7,8 +7,15 @@ import AddCartSuccess from "@/pages/AddCartSuccess/AddCartSuccess";
 import ShopCart from "@/pages/ShopCart/ShopCart";
 import Trade from "@/pages/Trade/Trade";
 import Pay from "@/pages/Pay/Pay";
+import PaySuccess from "@/pages/PaySuccess/PaySuccess";
 //配置路由组件
 export default [
+  {
+    path: "/paysuccess",
+    component: PaySuccess,
+    name: "PaySuccess",
+    meta: { show: true },
+  },
   {
     path: "/pay",
     component: Pay,
