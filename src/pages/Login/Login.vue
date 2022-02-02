@@ -86,15 +86,18 @@ export default {
     };
   },
   methods: {
-    userLogin() {
+    async userLogin() {
       try {
         const { phoneNumber, password } = this;
         let phone = phoneNumber;
-        phoneNumber &&
-          password &&
-          this.$store.dispatch("userLogin", { phone, password });
+        let result;
+        if (phoneNumber && password) {
+          result = await this.$store.dispatch("userLogin", { phone, password });
+        }
         //跳转到home首页
-        this.$router.push("/home");
+        if (result == "ok") {
+          this.$router.push("/home");
+        }
       } catch (error) {
         console.log(error.message);
       }

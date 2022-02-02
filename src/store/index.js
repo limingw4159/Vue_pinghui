@@ -6,6 +6,7 @@ import home from "./home/home";
 import search from "./search/search";
 import shopcart from "./shopcart/shopcart";
 import user from "./user/user";
+import trade from "./trade/trade";
 
 Vue.use(Vuex);
 //对外暴露store类的一个实例
@@ -19,5 +20,6 @@ export default new Vuex.Store({
     detail,
     shopcart,
     user,
+    trade,
   },
 });

@@ -35,13 +35,10 @@ export default {
     Brand,
   },
   mounted() {
-    console.log(this.$store.state.user.token);
     //派发action,获取floor组件的数据
     this.$store.dispatch("getFloorList");
     //获取用户信息在首页展示
-    // setTimeout(() => {
-    //   this.$store.dispatch("getUserInfo");
-    // }, 2000);
+    this.$store.dispatch("getUserInfo");
   },
   watch: {},
   computed: {

@@ -57,10 +57,54 @@ VueRouter.prototype.replace = function replace(location, onResolve, onReject) {
   return originalPush.call(this, location).catch((err) => err);
 };
 import routes from "./routes";
-export default new VueRouter({
+
+import store from "@/store/index";
+
+let router = new VueRouter({
   routes,
   scrollBehavior() {
     // 返回的这个y=0,代表的滚动条在最上方
     return { y: 100 };
   },
 });
+//全局首位:前置守卫(在理由跳转至简进行判断)
+router.beforeEach(async (to, from, next) => {
+  //to:可以获取到你要跳转到那个路由的信息
+  // console.log(to);
+  //from:可以获取到你从哪个路由而来的信息
+  // console.log(from);
+  //next():放行的函数, next(path)放行到指定的路由 , next(false):可以终止当前的导航并且重置到from的路径
+  //next('/login')
+  //测试用先全都放行
+  //用户登陆了,才会有token, 未登陆一定不会有token
+  let token = store.state.user.token;
+  //不停的捞用户信息, 所以就得把用户信息放在这里面
+  let name = store.state.user.userInfo.name;
+
+  //用户已经登陆了, 还想去login 不行
+  if (token) {
+    if (to.path == "/login" || to.path == "/register") {
+      next("/home");
+    } else {
+      //登陆了,但是去的不是login[home|search|detail|shopcart]
+      //如果用户名已有
+      if (name) {
+        next();
+      } else {
+        try {
+          //没有用户信息,派发action让仓库存储用户信息再跳转
+          await store.dispatch("getUserInfo");
+          next();
+        } catch (error) {
+          //如果走到此处,说明token在服务器端过期了, 需要重新登陆,清除token
+          await store.dispatch("userLogout");
+          next("/login");
+        }
+      }
+    }
+  } else {
+    //未登陆先放行
+    next();
+  }
+});
+export default router;

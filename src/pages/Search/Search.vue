@@ -282,11 +282,9 @@ export default {
 
       if (flag == originFlag) {
         newOrder = `${originFlag}:${originSort == "desc" ? "asc" : "desc"}`;
-        console.log(newOrder);
       } else {
         //点击的是价格
         newOrder = `${flag}:${"desc"}`;
-        console.log(newOrder);
       }
       //将心的order 赋予searchParams,并且再次发请求
       this.searchParams.order = newOrder;

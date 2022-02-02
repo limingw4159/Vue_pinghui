@@ -24,8 +24,6 @@ requests.interceptors.request.use((config) => {
   //config:配置对象, 对象里面有一个属性很重要, header请求头
   //判断uuid
   if (store.state.detail.uuid_token) {
-    console.log(store.state.detail.uuid_token);
-    console.log(store.state.user.token);
     //请求头添加一个字段(userTempId):和后台老师商量好了,并不是想加什么就加什么
     config.headers.userTempId = store.state.detail.uuid_token;
   }

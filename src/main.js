@@ -43,6 +43,9 @@ import "@/mock/mockServe";
 // Import Swiper styles
 import "swiper/css/swiper.css";
 
+//统一引入API
+import * as API from "@/api";
+
 new Vue({
   render: (h) => h(App),
   //注册路由, 由于KV一致,省略V
@@ -52,5 +55,7 @@ new Vue({
   //配置全局总线$bus
   beforeCreate() {
     Vue.prototype.$bus = this;
+    //把Vue的原型对象, 直接加一个API的属性, 把所有的api 直接挂载在原型对象身上, 可以让其他的组件直接使用
+    Vue.prototype.$API = API;
   },
 }).$mount("#app");

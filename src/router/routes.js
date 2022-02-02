@@ -5,8 +5,22 @@ import Register from "@/pages/Register/Register";
 import Detail from "@/pages/Detail/Detail";
 import AddCartSuccess from "@/pages/AddCartSuccess/AddCartSuccess";
 import ShopCart from "@/pages/ShopCart/ShopCart";
+import Trade from "@/pages/Trade/Trade";
+import Pay from "@/pages/Pay/Pay";
 //配置路由组件
 export default [
+  {
+    path: "/pay",
+    component: Pay,
+    name: "pay",
+    meta: { show: true },
+  },
+  {
+    path: "/Trade",
+    component: Trade,
+    name: "trade",
+    meta: { show: true },
+  },
   {
     path: "/ShopCart",
     component: ShopCart,
