@@ -135,6 +135,33 @@ export default {
         cancelButtonText: "支付遇见问题",
         confirmButtonText: "支付成功",
         showClose: false,
+        beforeClose: (type, instance, done) => {
+          //type:区分取消/确定按钮
+          //instance:当前组件实例
+          //done:关闭弹出框的方法
+          if (type == "cancel") {
+            alert("please contact manager");
+            //清除定时器
+            clearInterval(this.timer);
+            this.timer = null;
+            //关闭弹出窗
+            done();
+          } else {
+            //判断是否真的支付了
+            //为了写代码,这里就先把this.code先给停了
+            // if (this.code == 200) {
+            //关闭定时器, 跳转路由
+            clearInterval(this.timer);
+            this.timer = null;
+            done();
+            //跳转路由
+            this.$router.push("/paysuccess");
+            // }
+          }
+          // console.log(type);
+          // console.log(instance);
+          // console.log(done);
+        },
       });
       //需要知道支付成功|失败,一旦跳出支付框, 就要一直问服务器有没有支付成功
       //支付成功, 路由的跳转, 如果支付失败,提示信息

@@ -49,6 +49,13 @@ import { MessageBox } from "element-ui";
 //element ui 注册组件可以挂在原型上,需要先引入
 Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$alert = MessageBox.alert;
+//引入插件
+import VueLazyload from "vue-lazyload";
+import loading from "@/assets/images/loading.jpg";
+//注册插件
+Vue.use(VueLazyload, {
+  loading: loading,
+});
 new Vue({
   render: (h) => h(App),
   //注册路由, 由于KV一致,省略V

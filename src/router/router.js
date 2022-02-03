@@ -103,8 +103,18 @@ router.beforeEach(async (to, from, next) => {
       }
     }
   } else {
-    //未登陆先放行
-    next();
+    //未登陆不能去交易相关,不能去支付相关[pay/paysuccess],不能去个人中心
+    let toPath = to.path;
+    if (
+      toPath.indexOf("/trade") != -1 ||
+      toPath.indexOf("/pay") != -1 ||
+      toPath.indexOf("/center") != -1
+    ) {
+      //把为登陆的时候想去而没有去成的信息, 存储与地址栏中[路由]
+      next("/login?redirect=" + toPath);
+    } else {
+      next();
+    }
   }
 });
 export default router;
